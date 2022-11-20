@@ -1,8 +1,24 @@
 <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Solver</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-700 text-teal-400">
+  <div class="bg-slate-800 shadow-md p-2 rounded-b-2xl">
+    <h1 class="text-3xl text-center">Math Solver</h1>
+  </div>
+  <div class="flex flex-row justify-center">
+    <div class="mt-24 w-72 h-64 bg-slate-600 rounded-md shadow-lg">
+      <form class="p-2 flex flex-col" method=post enctype=multipart/form-data>
+        <p class="p-4 font-semibold text-lg">
+          Upload an Image of your Question:
+        </p>
+        <label for="fileIn" class="bg-slate-800 p-2 py-3 m-3 rounded-md cursor-pointer text-center shadow-md">Select file</label>
+        <input class="w-1 h-1 opacity-0 overflow-hidden absolute" id="fileIn" type=file name=file>
+        <button class="rounded-md bg-slate-800 p-2 py-3 m-3 cursor-pointer shadow-md">Check Results</button>
+      </form>
+    </div>
+  </div>
+</body>
 </html>

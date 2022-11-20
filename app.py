@@ -1,6 +1,6 @@
 import os
 from flask import Flask, flash, request, redirect, url_for
-from flask import send_from_directory
+# from flask import send_from_directory
 from werkzeug.utils import secure_filename
 
 import solution
@@ -12,8 +12,8 @@ with open('views/results.html', 'r') as f:
     resultsPage = f.read()
 ##
 
-UPLOAD_FOLDER = 'database/'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','java'}
+UPLOAD_FOLDER = 'static/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -51,15 +51,25 @@ def results(name):
     detectedList = solution.findContours(img)
     pred,result = solution.predictResult(model, detectedList, labelEncoder)
 
+    resultsPageX = resultsPage.replace('imageName', name)
+
     if result is None:
-        st = "Unable to solve: "+pred
-        return resultsPage.replace('replaceit', st)
+        print(pred)
+        st = '''
+        <p class="p-4 py-2 font-semibold text-xl text-red-400">~~Unclear Text~~</p>
+        <p class="p-4 py-2 font-bold text-xl text-red-400">Please try again!!</p>'''
+        return resultsPageX.replace('replaceit', st)
     else:
-        st = pred+' = '+str(result)
-        return resultsPage.replace('replaceit', st)
+        print(pred+' = '+str(result))
+        st = '''
+        <p class="p-4 font-semibold text-xl">Solved successfully!</p>
+        <p class="p-2 mx-3">Results:</p>
+        <p class="p-2 mx-3 font-bold text-xl text-lime-500">{}</p>
+        '''.format(pred + ' = ' +str(result))
+        return resultsPageX.replace('replaceit', st)
 
 
 app.add_url_rule('/results/<name>', 'results', build_only=True)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')

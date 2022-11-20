@@ -1,5 +1,7 @@
 Assets/
-database/
+static/
 models/
 venv/
 contours/
+node_modules/
+__pycache__/

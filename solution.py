@@ -13,36 +13,18 @@ import cv2
 import os
 import numpy as np
 from keras.models import load_model
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
+import pickle
 
 
 ## preparing
 def prepareEncoder():
-    symbols_list = ['0','1','2','3','4','5','6','7','8','9','-','+','=','div','forward_slash','times','(',')','{','}','[',']']
-
-    dataset_path = "./Assets/newData"
-    images = []
-    label = []
-
-    for symbols_dir in os.listdir(dataset_path):
-        if symbols_dir.split()[0] in symbols_list:
-            for image in os.listdir(dataset_path + "/" + symbols_dir):
-                label.append(symbols_dir.split()[0])
-                images.append(dataset_path + "/" + symbols_dir + "/" + image)
-
-    train_image, test_image, train_label, test_label = train_test_split(images, label, test_size=0.3, random_state=2)
-
-    # Label decoder
-    label_encoder = preprocessing.LabelEncoder()
-    y_train_temp = label_encoder.fit_transform(train_label)
-    y_test_temp = label_encoder.fit_transform(test_label)
-    del train_image,test_image, y_train_temp, y_test_temp
+    with open('./Assets/models/encoder.pickle', 'rb') as handle:
+        label_encoder = pickle.load(handle)
     return label_encoder
 
 # Load model
 def loadModel():
-    model = load_model('./Assets/models/new_model.h5')
+    model = load_model('./Assets/models/new_model_3.h5')
     return model
 
 # Load Image
@@ -55,7 +37,7 @@ def loadImg(path):
 def findContours(img):
     if img is not None:
         img=~img
-        ret,thresh=cv2.threshold(img,150,255,0)
+        ret,thresh=cv2.threshold(img,140,255,0)
         ctrs,ret=cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
         cnt=sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[0])
 
@@ -111,6 +93,7 @@ def findContours(img):
 
             ## To resize image
             img = cv2.resize(im_crop,(45,45))
+            # img = cv2.blur(img,(1,1))
             img=~img
             cv2.imwrite('contours/contours{}.jpg'.format(count), img)
             count+=1
@@ -146,6 +129,8 @@ def predictResult(model, testset, label_encoder):
             s=s+'('
         elif(result[0]==')' or result[0]=='}' or result[0]==']'):
             s=s+')'
+        elif(result[0]=='='):
+            s=s+'-'
         else:
             s=s+result[0]
     try:
