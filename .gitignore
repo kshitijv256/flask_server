@@ -5,3 +5,4 @@ venv/
 contours/
 node_modules/
 __pycache__/
+lib/
